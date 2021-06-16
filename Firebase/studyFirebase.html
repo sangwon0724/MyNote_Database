@@ -11,20 +11,182 @@
 <section id="start" tag="">
     <header class="note_title">기본</header>
     <ul>
-        <li>xxx
+        <li>사이트
             <pre>
-                ● xxx
+                ● <a href="https://firebase.google.com/">이동</a>
+            </pre>
+        </li>
+        <li>대표적인 기능
+            <pre>
+                ● 인증
+                ● 데이터베이스
+                ● 스토리지
+                ● 원격 구성
+                ● 푸시 알람
+            </pre>
+        </li>
+        <li>장점
+            <pre>
+                ● 무료
+                ● 개발 속도가 매우 빨라서 프로토타입 제작에 매우 유용하다.
+                ● 인증 시스템을 지원한다.
+                ● NoSQl 기반의 3세대 데이터베이스다.
+                ● RTSP(Real Time Stream Protocol) 방식의 데이터베이스를 지원한다.
+                ● 원격 구성을 지원합니다.
+                    ※ 원격 구성 : 원격으로 앱의 환경 상태를 구성하는 것
+                ●  콘솔을 제공한다.
+                ●  Analytics(통계)를 제공한다.
+                ● 플랫폼 자체를 구글에서 지원하다보니 인프라도 확실하고 시스템 내에서 서비스를 만들어내는데에는 특화되어 있다.
+            </pre>
+        </li>
+        <li>단점
+            <pre>
+                ● 모든 기능이 무료인것은 아니다. (어찌보면 단점이 아닌 당연한 점)
+                ● 서버의 응답속도가 종종 느려진다.
+                ● Firebase의 데이터베이스의 구/신버전 모두 쿼리의 종류가 빈약하다.
+            </pre>
+        </li>
+        <li>대체가능한 플랫폼
+            <pre>
+                ● Back4app
+                ● 백엔드리스
+                ● AWS Amplify
+                ● Parse
+                ● Kinvey 
             </pre>
         </li>
     </ul>
 </section>
 
-<section id="linkagesForWeb" tag="">
-    <header class="note_title">연동하기 - 웹</header>
+<section id="ready" tag="">
+    <header class="note_title">준비하기 - 공통</header>
     <ul>
-        <li>xxx
+        <li>준비과정
             <pre>
-                ● xxx
+                1. https://firebase.google.com/로 이동해서 구글 로그인을 한다.
+                2. "콘솔로 이동"을 클릭해서 콘솔로 이동한다.
+                3. 프로젝트를 생성한다.
+                4. 파이어베이스 콘솔에서 해당하는 프로젝트를 클릭하여 해당 프로젝트 콘솔로 이동한다.
+            </pre>
+        </li>
+    </ul>
+</section>
+
+<section id="linkages" tag="">
+    <header class="note_title">연동하기</header>
+    <ul>
+        <li>연동과정 - 웹
+            <pre>
+                1. 추가하기 버튼 중에서 웹 버튼을 클릭한다. (&lt;/> 모양)
+                2. 웹 앱의 이름을 입력하고 앱 등록하기를 클릭한다.
+                3 - 일반.
+                    파이어베이스 측에서 제공하는 API 코드를 복사하여 프로젝트에 추가한다.
+                3 - 리액트.
+                    (1) 터미널에서 npm install --save firebase를 실행한다.
+                    (2) firebase를 위한 js 파일을 만들어서 앱 등록시 제공하는 API 코드 중에서 최하단의 script 태그 안의 내용을 복붙한다.
+                    (3) import * as firebase from "firebase/app";를 방금 전의 파일에 추가한다.
+                    (4) 필요한 경우에만 firebase.initializeApp(firebaseConfig); 앞에 export default를 추가한다.
+
+                ※ 참고 : <a href="https://firebase.google.com/docs/web/setup">이동</a>
+            </pre>
+        </li>
+    </ul>
+</section>
+
+<section id="auth" tag="">
+    <header class="note_title">인증</header>
+    <ul>
+        <li>인증기능 사용하기 - 콘솔
+            <pre>
+                1. 빌드 메뉴의 Authentication를 클릭하여 계정 관리 메뉴로 이동한다.
+                2. 시작하기를 누른다.
+                3. 원하는 계정 종류에 따라서 해당 메뉴들을 활성화를 시켜준다.
+            </pre>
+        </li>
+        <li>인증기능 사용하기 - 준비 코드
+            <pre>
+                1. firebase에 대한 KEY 정보를 담고 있는 js 파일로 이동한다.
+                2. 최상단에 import "firebase/auth";를 추가한다.
+                    ※ import할 때 에러가 난다면 "* as"를 지운다. (firebase 8.0.0부터 쓰면 안됨)
+                    ※ 8.0.0 이전 : import * as firebase from 'firebase/app'
+                    ※ 8.0.0 이후 : import firebase from 'firebase/app'
+                3. export const authService = firebase.auth();를 작성한다.
+            </pre>
+        </li>
+        <li>인증기능 사용하기 - 이메일
+            <pre>
+                ※ 전제조건
+                    1. export const authService = firebase.auth(); 필요
+                    2. import { authService } from "XXX"; 필요
+                    2. 회원가입/로그인 여부 판단하는 변수 존재
+
+                ● 회원가입 및 로그인
+                    const onSubmit = async (event) => {
+                        //form의 submit 동작 막기
+                        event.preventDefault();
+                
+                        try
+                        {
+                            let data;
+
+                            if (newAccount) {
+                                //계정 생성의 경우
+                                data = await authService.createUserWithEmailAndPassword(
+                                email,
+                                password
+                                );
+                            }
+                            else
+                            {
+                                //로그인의 경우
+                                data = await authService.signInWithEmailAndPassword(email, password);
+                            }
+                            console.log(data);
+                        }
+                        catch (error)
+                        {
+                            console.log(error);
+                        }
+                    };
+            </pre>
+        </li>
+        <li>인증기능 사용하기 - 소셜로그인
+            <pre>
+                ※ 전제조건
+                    1. export const firebaseInstance = firebase; 필요
+                    2. import { authService, firebaseInstance } from "XXX"; 필요
+                
+                ● 코드
+                    const onSocialClick = async (event) => {
+                        const { target: { name } } = event;
+                        let provider;
+
+                        if (name === "google")
+                        {
+                            provider = new firebaseInstance.auth.GoogleAuthProvider();
+                        }
+                        else if (name === "github")
+                        {
+                            provider = new firebaseInstance.auth.GithubAuthProvider();
+                        }
+                        const data = await authService.signInWithPopup(provider);
+                        console.log(data);
+                    };
+            </pre>
+        </li>
+        <li>인증기능 사용하기 - 깃허브 계정 사용
+            <pre>
+                1. 깃허브 페이지로 가서 로그인을 한다.
+                2. Settings 메뉴로 간다.
+                3. Developer settings를 클릭한다.
+                4. OAuth App을 클릭한다.
+                5. Register a new application을 클릭한다.
+                6. 앱 이름과 URL을 작성한다.
+                    ※ URL은 firebase의 계정 메뉴에서 깃허브 활성화시 나오는 URL을 입력한다.
+                    ※ 홈페이지 URL은 콜백 URL과 동일하게 쓰되, 콜백 URL의 주소에서 "__/auth/handler"만 제외한다.
+                7. Register application을 클릭해서 등록한다.
+                8. 깃허브에서 앱을 등록했을 때 나오는 Client ID와 Client secrets를 복사해서 ㅇ
+                   firebase의 콘솔의 계정 메뉴의 깃허브 항목에 붙여넣은 뒤 저장한다.
             </pre>
         </li>
     </ul>
@@ -34,7 +196,9 @@
     <article id="remote_setcion">
         <select id="remote_menu">
             <option value="start">시작</option>
-            <option value="linkagesForWeb">연동하기 - 웹</option>
+            <option value="ready">준비하기 - 공통</option>
+            <option value="linkages">연동하기</option>
+            <option value="linkages">인증</option>
         </select>
     </article>
 </div>
