@@ -94,16 +94,16 @@
 </section>
 
 <section id="auth" tag="">
-    <header class="note_title">인증</header>
+    <header class="note_title">계정</header>
     <ul>
-        <li>인증기능 사용하기 - 콘솔
+        <li>계정기능 사용하기 - 콘솔
             <pre>
                 1. 빌드 메뉴의 Authentication를 클릭하여 계정 관리 메뉴로 이동한다.
                 2. 시작하기를 누른다.
                 3. 원하는 계정 종류에 따라서 해당 메뉴들을 활성화를 시켜준다.
             </pre>
         </li>
-        <li>인증기능 사용하기 - 준비 코드
+        <li>계정기능 사용하기 - 준비 코드
             <pre>
                 1. firebase에 대한 KEY 정보를 담고 있는 js 파일로 이동한다.
                 2. 최상단에 import "firebase/auth";를 추가한다.
@@ -113,11 +113,11 @@
                 3. export const authService = firebase.auth();를 작성한다.
             </pre>
         </li>
-        <li>인증기능 사용하기 - 이메일
+        <li>회원가입 및 로그인 (이메일 + 비밀번호)
             <pre>
                 ※ 전제조건
-                    1. export const authService = firebase.auth(); 필요
-                    2. import { authService } from "XXX"; 필요
+                    1. export const authService = firebase.auth(); 필요 => firebase 설정 js 파일
+                    2. import { authService } from "XXX"; 필요 => 기능을 사용할 js 파일
                     2. 회원가입/로그인 여부 판단하는 변수 존재
 
                 ● 회원가입 및 로그인
@@ -150,11 +150,11 @@
                     };
             </pre>
         </li>
-        <li>인증기능 사용하기 - 소셜로그인
+        <li>소셜로그인 - 일반
             <pre>
                 ※ 전제조건
-                    1. export const firebaseInstance = firebase; 필요
-                    2. import { authService, firebaseInstance } from "XXX"; 필요
+                    1. export const firebaseInstance = firebase; 필요 => firebase 설정 js 파일
+                    2. import { authService, firebaseInstance } from "XXX"; 필요 => 기능을 사용할 js 파일
                 
                 ● 코드
                     const onSocialClick = async (event) => {
@@ -176,7 +176,7 @@
                 ※ 참고 : <a href="https://firebase.google.com/docs/reference/js/firebase.auth">이동</a>
             </pre>
         </li>
-        <li>인증기능 사용하기 - 깃허브 계정 사용
+        <li>소셜로그인 - 깃허브
             <pre>
                 1. 깃허브 페이지로 가서 로그인을 한다.
                 2. Settings 메뉴로 간다.
@@ -191,7 +191,7 @@
                    firebase의 콘솔의 계정 메뉴의 깃허브 항목에 붙여넣은 뒤 저장한다.
             </pre>
         </li>
-        <li>인증기능 사용하기 - 로그아웃 (공통)
+        <li>로그아웃 (공통)
             <pre>
                 ※ 전제조건
                     1. export const authService = firebase.auth();
@@ -208,13 +208,107 @@
     </ul>
 </section>
 
+<section id="database" tag="">
+    <header class="note_title">데이터베이스 (Firestore Database)</header>
+    <ul>
+        <li>데이터베이스 기능 사용하기 - 콘솔
+            <pre>
+                1. 빌드 메뉴의 Firestore Database를 클릭하여 계정 관리 메뉴로 이동한다.
+                2. 데이터베이스 만들기를 누른다.
+                3. test mode로 생성한다.
+                4. 자신의 집과 가까운 지역으로 설정한다.
+                5. 컬렉션 시작을 누른다.
+                6. 임의의 값을 입력한 뒤에 저장을 누른다.
+            </pre>
+        </li>
+        <li>데이터베이스 기능 사용하기 - 준비 코드
+            <pre>
+                1. firebase에 대한 KEY 정보를 담고 있는 js 파일로 이동한다.
+                2. 최상단에 import "firebase/firestore";를 추가한다
+                3. export const dbService = firebase.firestore();를 추가한다.
+            </pre>
+        </li>
+        <li>데이터베이스 기능 - 
+            <pre>
+                ※ 전제조건
+                    1. export const dbService = firebase.firestore(); 필요 => firebase 설정 js 파일
+                    2. import { dbService, useEffect } from "XXX"; 필요 => 기능을 사용할 js 파일
+
+                ● 데이터 추가
+                    ○ 기본틀
+                        //전제조건 만족 후
+                        const 함수명 = async (event) => {
+                            event.preventDefault();
+                            await dbService.collection("컬렉션명").add({
+                              항목명1 : 항목명1,
+                              항목명2: 항목명2,
+                              ...
+                            });
+                        };
+                    ○ 예시 코드
+                        const [nweet, setNweet] = useState("");
+
+                        const onSubmit = async (event) => {
+                            event.preventDefault();
+                            await dbService.collection("jack").add({
+                            nweet,
+                            createdAt: Date.now(),
+                            });
+                            setNweet("");
+                        };
+
+                ● 데이터 가져오기
+                    ○ 기본틀
+                        //전제조건 만족 후
+                        const [XXX, setXXX] = useState([]);
+                        const 함수명 = async (event) => {
+                            const 변수명 = await dbService.collection("컬렉션명").get();
+                            변수명.forEach((document) => {
+                                const nweetObject = {
+                                ...document.data(),
+                                id: document.id,
+                                };
+                                setXXX((prev) => [nweetObject, ...prev]);
+                            });
+                        };
+                        useEffect(() => {
+                          getNweets();
+                        }, []);
+
+                        ※ dbService.collection("컬렉션명").get();은 단순하게 object를 주기때문에 풀어서 사용해야 한다.
+                        ※ forEach를 돌릴때 마다 setXXX를 해야지 데이터의 개수만큼 정상적으로 데이터를 읽을 수 있다.
+                        ※ document.data()처럼 data() 함수를 써야지 해당 문서의 값들을 가져올수 있다.
+                        ※ 해당 문서의 id 값은 document.id처럼 개별 요소이기 때문에 필요한 경우에는 이처럼 직접 추가해줘야 한다.
+                        ※ 리액트의 useState를 통한 setXXX를 사용할 때 값이 아닌 함수로 전달할 수 있는데,
+                           이 때 사용되는 변수는 이전에 setXXX를 통해서 설정된 현재의 XXX의 값을 가져올 수 있다.
+                    ○ 예시 코드
+                        const [nweets, setNweets] = useState([]);
+                        const getNweets = async () => {
+                            const dbNweets = await dbService.collection("jack").get();
+                            dbNweets.forEach((document) => {
+                            const nweetObject = {
+                                ...document.data(),
+                                id: document.id,
+                            };
+                            setNweets((prev) => [nweetObject, ...prev]);
+                            });
+                        };
+                        useEffect(() => {
+                            getNweets();
+                        }, []);
+            </pre>
+        </li>
+    </ul>
+</section>
+
 <div id="remote">
     <article id="remote_setcion">
         <select id="remote_menu">
             <option value="start">시작</option>
             <option value="ready">준비하기 - 공통</option>
             <option value="linkages">연동하기</option>
-            <option value="linkages">인증</option>
+            <option value="auth">계정</option>
+            <option value="database">데이터베이스 (Firestore Database)</option>
         </select>
     </article>
 </div>
